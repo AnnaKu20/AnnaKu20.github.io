@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anna Kuznetsova, PhD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Source+Serif+4:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --abyss: #0A1E28;
+    --panel: #10303F;
+    --paper: #E9EDE4;
+    --seaglass: #7FA9A0;
+    --amber: #D3A24C;
+    --line: rgba(233, 237, 228, 0.14);
+    --dim: rgba(233, 237, 228, 0.56);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--abyss);
+    color: var(--paper);
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--amber); color: var(--abyss); }
+
+  a { color: inherit; }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* background texture: faint depth gradient + drifting particulate */
+  .depth-field {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 120% 60% at 50% -10%, rgba(127,169,160,0.10), transparent 60%),
+      linear-gradient(180deg, #0A1E28 0%, #0C2632 45%, #0A1E28 100%);
+    pointer-events: none;
+  }
+
+  .motes { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5; }
+  .mote {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--seaglass);
+    border-radius: 50%;
+    animation: drift linear infinite;
+  }
+  @keyframes drift {
+    from { transform: translateY(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.4; }
+    to { transform: translateY(-100vh); opacity: 0; }
+  }
+
+  main { position: relative; z-index: 1; }
+
+  /* ---------- Header / nav ---------- */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,30,40,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-id {
+    font-size: 12.5px;
+    color: var(--seaglass);
+    letter-spacing: 0.08em;
+  }
+  .nav-links { display: flex; gap: 28px; font-size: 13px; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--dim);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible { color: var(--amber); }
+
+  /* ---------- Hero: specimen record ---------- */
+  .hero {
+    padding: 96px 0 80px;
+    border-bottom: 1px solid var(--line);
+  }
+  .record-label {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--amber);
+    border: 1px solid rgba(211,162,76,0.4);
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--seaglass);
+  }
+  .hero .role {
+    margin-top: 22px;
+    font-size: 19px;
+    color: var(--dim);
+    max-width: 560px;
+    font-weight: 300;
+  }
+  .hero-layout {
+    display: flex;
+    gap: 44px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .hero-text { flex: 1; min-width: 0; }
+  .hero-portrait {
+    flex-shrink: 0;
+    width: 220px;
+    height: 293px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .hero-portrait::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(211,162,76,0.25);
+    pointer-events: none;
+  }
+  .hero-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.88) contrast(1.02);
+    display: block;
+  }
+  @media (max-width: 640px) {
+    .hero-layout { flex-direction: column-reverse; gap: 28px; }
+    .hero-portrait { width: 160px; height: 213px; }
+  }
+  .field-strip {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+  }
+  .field {
+    padding: 18px 20px 0 0;
+    border-right: 1px solid var(--line);
+  }
+  .field:last-child { border-right: none; }
+  .field-k {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    color: var(--seaglass);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .field-v { font-size: 14px; color: var(--paper); }
+  .field-desc {
+    font-family: 'Source Serif 4', serif;
+    font-size: 12.5px;
+    color: var(--dim);
+    margin-top: 6px;
+    line-height: 1.45;
+    font-weight: 300;
+    letter-spacing: normal;
+  }
+
+  /* ---------- Section scaffolding ---------- */
+  section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .section-code {
+    font-size: 12px;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+  .section-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 26px;
+    color: var(--paper);
+  }
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ---------- Background / timeline ---------- */
+  .strain {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 24px;
+    padding: 26px 0;
+    border-top: 1px solid var(--line);
+  }
+  .strain:last-child { padding-bottom: 0; }
+  .strain-id {
+    font-size: 12.5px;
+    color: var(--seaglass);
+    padding-top: 3px;
+  }
+  .strain h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18.5px;
+    color: var(--paper);
+    margin-bottom: 6px;
+  }
+  .strain p { color: var(--dim); font-size: 15px; max-width: 620px; }
+
+  /* ---------- Editorial / publications ---------- */
+  .plate {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 28px 28px;
+    margin-bottom: 16px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .plate:hover { border-color: rgba(127,169,160,0.4); transform: translateY(-2px); }
+  .plate-tag {
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .plate h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin-bottom: 8px;
+  }
+  .plate p { color: var(--dim); font-size: 14.5px; }
+
+  /* ---------- Focus areas grid ---------- */
+  .focus-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .focus-cell {
+    background: var(--abyss);
+    padding: 26px 24px;
+  }
+  .focus-cell .field-k { margin-bottom: 10px; }
+  .focus-cell p { color: var(--dim); font-size: 14.5px; }
+
+  /* ---------- Contact ---------- */
+  .contact-plate {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 44px 40px;
+    text-align: center;
+  }
+  .contact-plate h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 30px;
+    margin-bottom: 14px;
+  }
+  .contact-plate p { color: var(--dim); margin-bottom: 26px; }
+
+  /* ---------- Publications (professor-style citations) ---------- */
+  .pub-list { list-style: none; }
+  .pub {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+  .pub:last-child { padding-bottom: 0; }
+  .pub-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--seaglass);
+    padding-top: 2px;
+  }
+  .pub-text {
+    font-size: 15px;
+    color: var(--paper);
+    line-height: 1.65;
+  }
+  .pub-text .self { color: var(--paper); font-weight: 500; }
+  .pub-text .journal { font-style: italic; color: var(--dim); }
+  .pub-text .doi {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--seaglass);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(127,169,160,0.35);
+  }
+  .pub-text .doi:hover { color: var(--amber); border-color: var(--amber); }
+  .pub-group-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 36px 0 4px;
+  }
+  .pub-group-label:first-child { margin-top: 0; }
+
+  /* ---------- Grants ---------- */
+  .grant {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+  .grant:last-child { padding-bottom: 0; }
+  .grant-id { font-size: 12.5px; color: var(--seaglass); padding-top: 3px; }
+  .grant h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 17.5px;
+    color: var(--paper);
+    margin-bottom: 4px;
+  }
+  .grant .grant-role {
+    font-size: 12.5px;
+    color: var(--amber);
+    margin-bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .grant p { color: var(--dim); font-size: 14.5px; max-width: 600px; }
+  .grant.featured { background: var(--panel); border: 1px solid rgba(211,162,76,0.3); border-radius: 3px; padding: 24px 24px; margin: -1px 0 16px; }
+  .grant.featured .grant-id { padding-top: 0; }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .contact-links a {
+    text-decoration: none;
+    font-size: 13.5px;
+    color: var(--paper);
+    border: 1px solid var(--line);
+    padding: 10px 20px;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .contact-links a:hover, .contact-links a:focus-visible {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  footer {
+    text-align: center;
+    padding: 32px 0 48px;
+    font-size: 11.5px;
+    color: rgba(233,237,228,0.35);
+  }
+
+  @media (max-width: 640px) {
+    .field-strip { grid-template-columns: 1fr; }
+    .field { border-right: none; border-bottom: 1px solid var(--line); padding: 14px 0; }
+    .field:last-child { border-bottom: none; }
+    .strain { grid-template-columns: 1fr; gap: 6px; }
+    .focus-grid { grid-template-columns: 1fr; }
+    .nav-links { gap: 16px; font-size: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mote { animation: none; opacity: 0; }
+    html { scroll-behavior: auto; }
+    .plate:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="depth-field"></div>
+<div class="motes" id="motes"></div>
+
+<header>
+  <div class="nav-inner">
+    <span class="nav-id mono">A. KUZNETSOVA</span>
+    <nav class="nav-links">
+      <a href="#background">Background</a>
+      <a href="#focus">Focus</a>
+      <a href="#publications">Publications</a>
+      <a href="#grants">Grants</a>
+      <a href="#services">Consulting</a>
+      <a href="#editorial">Editorial</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-layout">
+        <div class="hero-text">
+          <span class="record-label mono">RESEARCHER · FERMENTATION &amp; NATURAL PRODUCTS</span>
+          <h1>Anna Kuznetsova <em>PhD</em></h1>
+          <p class="role">Researcher with more than 15 years of experience working across natural products discovery, microbial communities and fermentation: from marine and soil ecosystems to industrial-scale bioprocess development.</p>
+        </div>
+        <div class="hero-portrait">
+          <img src="portrait.jpg" alt="Portrait of Anna Kuznetsova">
+        </div>
+      </div>
+
+      <div class="field-strip mono">
+        <div class="field">
+          <div class="field-k">Current Role</div>
+          <div class="field-v">Fermentation Scientist, MARA Renewables</div>
+        </div>
+        <div class="field">
+          <div class="field-k">Also</div>
+          <div class="field-v">Research Consulting &amp; Mentoring</div>
+          <div class="field-desc">Advising on fermentation and natural-products projects, and mentoring early-career researchers.</div>
+        </div>
+        <div class="field">
+          <div class="field-k">Base</div>
+          <div class="field-v">Halifax, Nova Scotia</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="background">
+      <div class="section-head">
+        <span class="section-code mono">§01</span>
+        <h2>Background</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="strain">
+        <div class="strain-id mono">2023 — present</div>
+        <div>
+          <h3>Fermentation Scientist · MARA Renewables Corporation</h3>
+          <p>Uses experimental design and Python/R/Excel analysis to optimize fermentation conditions and evaluate their effect on microbial and microalgal strains; supports facility transfer and scale-up, and conducts phylogenetic characterization of production strains.</p>
+        </div>
+      </div>
+
+      <div class="strain">
+        <div class="strain-id mono">2017 — 2026</div>
+        <div>
+          <h3>Doctoral Researcher · Kerr Laboratory of Marine Natural Products, UPEI</h3>
+          <p>Investigated temperature-dependent antibiotic and natural-product biosynthesis in Arctic marine <em>Streptomyces</em>. Integrated microbial cultivation, LC-MS/HRMS metabolite profiling, genome analysis, and molecular microbiology; generated draft genomes for three marine streptomycetes. PhD in Biomedical Sciences, awarded March 2026.</p>
+        </div>
+      </div>
+
+      <div class="strain">
+        <div class="strain-id mono">2012 — 2017</div>
+        <div>
+          <h3>Researcher / Project Lead · Winogradsky Institute of Microbiology, Russian Academy of Sciences</h3>
+          <p>Studied microbial diversity and biogeochemical processes in hypersaline soils and saline lakes, with emphasis on cyanobacteria, algae, actinomycetes, and prokaryotic communities. Led an RFBR young-scientist grant and teams of 3–5 researchers, and directed a BASF-sponsored soybean fungicide trial that supported product introduction in Russia.</p>
+        </div>
+      </div>
+
+      <div class="strain">
+        <div class="strain-id mono">M.S. 2008</div>
+        <div>
+          <h3>Soil Science · Lomonosov Moscow State University</h3>
+          <p>Geology, soil chemistry, and biogeochemical cycles — the foundation for a research path that moved from terrestrial systems into marine and industrial microbiology.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="focus">
+      <div class="section-head">
+        <span class="section-code mono">§02</span>
+        <h2>Areas of Focus</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="focus-grid">
+        <div class="focus-cell">
+          <div class="field-k mono">Fermentation Science</div>
+          <p>Microbial and microalgal growth kinetics, lipid accumulation, and DHA production in industrial-scale bioprocesses.</p>
+        </div>
+        <div class="focus-cell">
+          <div class="field-k mono">Natural Products</div>
+          <p>Biosynthesis of bioactive compounds in marine and cold-adapted microbial systems, and antibiotic production in the context of antimicrobial resistance (AMR).</p>
+        </div>
+        <div class="focus-cell">
+          <div class="field-k mono">Genome Science</div>
+          <p>Review and evaluation of microbial genome-sequencing manuscripts for publication.</p>
+        </div>
+        <div class="focus-cell">
+          <div class="field-k mono">Process &amp; Kinetic Modelling</div>
+          <p>Evaluating fermentation models against real bioprocess data to inform scale-up decisions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="publications">
+      <div class="section-head">
+        <span class="section-code mono">§03</span>
+        <h2>Publications</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="pub-group-label">Peer-reviewed</div>
+      <div class="pub-list">
+        <div class="pub">
+          <div class="pub-num">01</div>
+          <div class="pub-text"><span class="self">Kuznetsova, A.I.</span>, Haltli, B.A., &amp; Kerr, R.G. (2022). Draft genome sequences of three streptomycetes isolated from Frobisher Bay marine sediments. <span class="journal">Microbiology Resource Announcements</span>, 11(10).<br><a class="doi" href="https://doi.org/10.1128/mra.00604-22" target="_blank" rel="noopener">doi:10.1128/mra.00604-22</a></div>
+        </div>
+        <div class="pub">
+          <div class="pub-num">02</div>
+          <div class="pub-text"><span class="self">Kuznetsova, A.I.</span>, Ivanova, E.A., Samylina, O.S., Kurbanova, F.G., Gruzdev, D.S., Kanapatskiy, T.A., &amp; Pimenov, N.V. (2020). Prokaryotic communities in saline soils of the Lake Elton area in a soil catena along the Khara River. <span class="journal">Microbiology</span>, 89(6), 658–674.<br><a class="doi" href="https://doi.org/10.1134/S0026261720060119" target="_blank" rel="noopener">doi:10.1134/S0026261720060119</a></div>
+        </div>
+        <div class="pub">
+          <div class="pub-num">03</div>
+          <div class="pub-text">Kanapatskiy, T.A., Samylina, O.S., Plotnikov, A.O., Selivanova, E.A., Khlopko, Y.A., <span class="self">Kuznetsova, A.I.</span>, Rusanov, I.I., Zakharova, E.E., &amp; Pimenov, N.V. (2018). Microbial processes of organic matter production and decomposition in saline rivers of the Lake Elton area (Volgograd oblast, Russia). <span class="journal">Microbiology</span>, 87(1), 66–78.<br><a class="doi" href="https://doi.org/10.1134/S0026261718010095" target="_blank" rel="noopener">doi:10.1134/S0026261718010095</a></div>
+        </div>
+        <div class="pub">
+          <div class="pub-num">04</div>
+          <div class="pub-text">Zenova, G.M., Dubrova, M.S., <span class="self">Kuznetsova, A.I.</span>, Gracheva, T.A., Manucharova, N.A., &amp; Zvyagintsev, D.G. (2016). Ecological and taxonomic features of actinomycetal complexes in soils of the Lake Elton Basin. <span class="journal">Eurasian Soil Science</span>, 49(2), 213–216.<br><a class="doi" href="https://doi.org/10.1134/S1064229316020149" target="_blank" rel="noopener">doi:10.1134/S1064229316020149</a></div>
+        </div>
+        <div class="pub">
+          <div class="pub-num">05</div>
+          <div class="pub-text">Kurapova, A.I. (Kuznetsova), Zenova, G.M., Sudnitsyn, I.I., et al. (2012). Thermotolerant and thermophilic actinomycetes from soils of the Mongolia desert steppe zone. <span class="journal">Microbiology</span>, 81, 98–108.<br><a class="doi" href="https://doi.org/10.1134/S0026261712010092" target="_blank" rel="noopener">doi:10.1134/S0026261712010092</a></div>
+        </div>
+      </div>
+
+      <div class="pub-group-label">Manuscripts in preparation</div>
+      <div class="pub-list">
+        <div class="pub">
+          <div class="pub-num">06</div>
+          <div class="pub-text"><span class="self">Kuznetsova, A.I.</span>, Haltli, B.A., &amp; Kerr, R.G. (2026). Cold-induced activation of a landomycin biosynthetic gene cluster in <em>Streptomyces laculatispora</em> RKAG290. <span class="journal">Frontiers in Microbiology</span>. Manuscript in preparation.</div>
+        </div>
+        <div class="pub">
+          <div class="pub-num">07</div>
+          <div class="pub-text">Grunwald, A., Haltli, B., <span class="self">Kuznetsova, A.I.</span>, Duncan, N., Correa, H., Lanteigne, M., &amp; Kerr, R. (2026). Temperature-dependent metabolite production by Arctic marine actinomycetes. <span class="journal">Marine Drugs</span>. Manuscript in preparation.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="grants">
+      <div class="section-head">
+        <span class="section-code mono">§04</span>
+        <h2>Research Grants &amp; Awards</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="grant featured">
+        <div class="grant-id mono">2014 — 2016</div>
+        <div>
+          <div class="grant-role">Grant Lead</div>
+          <h3>Russian Foundation for Basic Research (RFBR) Young Scientists Grant</h3>
+          <p>Microbial diversity of hypersaline soils at Lake Elton. Led a four-person team, completed funder reporting, and produced two publications and a conference presentation. Total value: $15,000.</p>
+        </div>
+      </div>
+
+      <div class="grant">
+        <div class="grant-id mono">2017 — 2019</div>
+        <div>
+          <div class="grant-role">Recipient</div>
+          <h3>Dr. J. Regis Duffy Graduate Scholarship in Science</h3>
+          <p>University of Prince Edward Island. Awarded in two consecutive academic years (2017–2018 and 2018–2019). Total value: $25,000.</p>
+        </div>
+      </div>
+
+      <div class="grant">
+        <div class="grant-id mono">2016 — 2017</div>
+        <div>
+          <div class="grant-role">Project Lead</div>
+          <h3>BASF-Sponsored Applied Research Project</h3>
+          <p>Evaluation of soybean fungicides; led a three-person team and supported introduction of new products in Russia. Total value: $10,000.</p>
+        </div>
+      </div>
+
+      <div class="grant">
+        <div class="grant-id mono">2012 — 2013</div>
+        <div>
+          <div class="grant-role">Researcher</div>
+          <h3>RFBR-Funded Cyanobacterial Diversity Project</h3>
+          <p>Isolation and characterization of cyanobacteria and algae from Kulunda Steppe lakes; completed funder reporting. Total value: $15,000.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="section-head">
+        <span class="section-code mono">§05</span>
+        <h2>Consulting</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="plate">
+        <div class="plate-tag mono">Process Development</div>
+        <h3>Fermentation &amp; Bioprocess Optimization</h3>
+        <p>Evaluation and troubleshooting of fermentation and kinetic models, seed train design, and scale-up strategy for microbial production processes — from bench to pilot scale.</p>
+      </div>
+
+      <div class="plate">
+        <div class="plate-tag mono">Manuscript &amp; Data Review</div>
+        <h3>Genome-Sequencing &amp; Technical Review</h3>
+        <p>Editorial-level review of genome-sequencing manuscripts and technical reports, drawing on active editorial experience with ASM's <em>Microbiology Resource Announcements</em>.</p>
+      </div>
+
+      <div class="plate">
+        <div class="plate-tag mono">Applied Research</div>
+        <h3>Microbial Natural Products &amp; Genomics</h3>
+        <p>Research support for projects involving microbial natural product discovery, strain characterization, and biosynthesis studies, informed by PhD research on Arctic marine <em>Streptomyces</em>.</p>
+      </div>
+    </section>
+
+    <section id="editorial">
+      <div class="section-head">
+        <span class="section-code mono">§06</span>
+        <h2>Editorial</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="plate">
+        <div class="plate-tag mono">ASM · Since 2024</div>
+        <h3>Editor, Microbiology Resource Announcements</h3>
+        <p>Reviews genome-sequencing manuscripts for the American Society for Microbiology, evaluating methodology, assembly quality, and reporting standards for published microbial genome announcements.</p>
+      </div>
+
+      <div class="plate">
+        <div class="plate-tag mono">Peer Reviewer</div>
+        <h3>Applied and Environmental Microbiology · Environmental Science and Pollution Research International · Microbiology Spectrum</h3>
+        <p>Reviews manuscripts for these journals, evaluating study design, methodology, and data interpretation across microbiology and environmental science.</p>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="section-head">
+        <span class="section-code mono">§07</span>
+        <h2>Contact</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="contact-plate">
+        <h2>Start a project</h2>
+        <p>Available for consulting engagements in fermentation science, bioprocess development, and microbial research review. Get in touch to discuss your project.</p>
+        <div class="contact-links mono">
+          <a href="mailto:kuznetsovasci@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/kuznetsovasci/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://orcid.org/0000-0001-7359-5904" target="_blank" rel="noopener">ORCID</a>
+          <a href="https://scholar.google.com/citations?user=kTAUhFoAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="mono">
+  RECORD LAST UPDATED · 2026
+</footer>
+
+<script>
+  // Ambient drifting particulate field
+  const container = document.getElementById('motes');
+  const count = window.innerWidth < 640 ? 12 : 24;
+  for (let i = 0; i < count; i++) {
+    const m = document.createElement('div');
+    m.className = 'mote';
+    m.style.left = Math.random() * 100 + 'vw';
+    m.style.bottom = '-10px';
+    m.style.animationDuration = (14 + Math.random() * 16) + 's';
+    m.style.animationDelay = (Math.random() * 20) + 's';
+    container.appendChild(m);
+  }
+</script>
+
+</body>
+</html>
